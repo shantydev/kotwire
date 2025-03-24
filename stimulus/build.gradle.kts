@@ -31,3 +31,33 @@ kotlin {
         val jvmMain by getting
     }
 }
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/shantydev/kotwire")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        // Automatically create publications for each target
+        withType<MavenPublication> {
+            pom {
+                name.set("Kotwire Stimulus")
+                description.set("Kotlin Bindings and Utilities for Stimulus")
+                url.set("https://github.com/shantydev/kotwire")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+            }
+        }
+    }
+}
