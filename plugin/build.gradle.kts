@@ -15,7 +15,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("stimulus-plugin") {
-            id = "dev.shanty.kotwire.plugin"
+            id = "plugin"
             implementationClass = "dev.shanty.kotwire.stimulus.gradle.StimulusPlugin"
         }
     }
