@@ -12,10 +12,16 @@ dependencies {
 }
 
 gradlePlugin {
+    website.set("https://github.com/shantydev/kotwire")
+    vcsUrl.set("https://github.com/shantydev/kotwire")
+
     plugins {
         create("stimulus-plugin") {
             id = "dev.shanty.kotwire.plugin"
             implementationClass = "dev.shanty.kotwire.stimulus.gradle.StimulusPlugin"
+            displayName = "Kotwire Gradle Plugin"
+            description = "Code Generation Plugin for Kotwire"
+            tags.set(listOf("kotlin", "code-generation", "web"))
         }
     }
 }
@@ -28,27 +34,6 @@ publishing {
             credentials {
                 username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
-
-    publications {
-        // Create a single publication for the Gradle plugin
-        register<MavenPublication>("gradlePlugin") {
-            from(components["java"])
-
-            artifactId = "kotwire-gradle-plugin"
-
-            pom {
-                name.set("Kotwire Gradle Plugin")
-                description.set("Code Generation Plugin for Kotwire")
-                url.set("https://github.com/shantydev/kotwire")
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
             }
         }
     }
