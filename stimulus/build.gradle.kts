@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "dev.shanty.kotwire"
-version = "0.0.1"
+version = project.findProperty("projectVersion") ?: "0.0.0-local"
 
 kotlin {
     js {
