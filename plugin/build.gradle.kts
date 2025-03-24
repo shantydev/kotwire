@@ -33,8 +33,12 @@ publishing {
     }
 
     publications {
-        // Automatically create publications for each target
-        withType<MavenPublication> {
+        // Create a single publication for the Gradle plugin
+        register<MavenPublication>("gradlePlugin") {
+            from(components["java"])
+
+            artifactId = "kotwire-gradle-plugin"
+
             pom {
                 name.set("Kotwire Gradle Plugin")
                 description.set("Code Generation Plugin for Kotwire")
