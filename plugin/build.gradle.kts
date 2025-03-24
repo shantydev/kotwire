@@ -5,6 +5,7 @@ plugins {
 }
 
 version = project.findProperty("projectVersion") ?: "0.0.0-local"
+group = "dev.shanty.kotwire"
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.10")
