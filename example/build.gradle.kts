@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 plugins {
     kotlin("multiplatform") version "2.1.10"
     id("com.google.devtools.ksp") version "2.1.10-1.0.31"
-    id("dev.shanty.kotwire.stimulus")
+    id("plugin")
     application
     id("io.kotest.multiplatform") version "5.9.1"
 }
