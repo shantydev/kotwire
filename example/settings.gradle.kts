@@ -1,0 +1,7 @@
+includeBuild("..")
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}

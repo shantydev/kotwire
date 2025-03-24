@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="kotwire.main" target="23" />
+      <module name="kotwire.stimulus.gradle.main" target="23" />
+      <module name="kotwire.stimulus.gradle.test" target="23" />
+      <module name="kotwire.stimulus.ksp.main" target="23" />
+      <module name="kotwire.stimulus.ksp.test" target="23" />
+      <module name="kotwire.stimulus.main" target="23" />
+      <module name="kotwire.stimulus.test" target="23" />
+      <module name="kotwire.test" target="23" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

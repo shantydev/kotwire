@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="stimulus-js">
+    <output-path>$PROJECT_DIR$/stimulus/build/libs</output-path>
+    <root id="archive" name="stimulus-js.jar">
+      <element id="module-output" name="kotwire.stimulus.jsMain" />
+    </root>
+  </artifact>
+</component>
