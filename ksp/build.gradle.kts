@@ -36,10 +36,10 @@ publishing {
 
     publications {
         // Automatically create publications for each target
-        withType<MavenPublication> {
+        create<MavenPublication>("ksp") {
             pom {
                 name.set("Kotwire KSP")
-                description.set("Kotlin Bindings and Utilities for Stimulus")
+                description.set("Code Generation for Kotwire")
                 url.set("https://github.com/shantydev/kotwire")
                 licenses {
                     license {
@@ -47,6 +47,7 @@ publishing {
                         url.set("https://opensource.org/licenses/MIT")
                     }
                 }
+                from(components["java"])
             }
         }
     }
