@@ -17,12 +17,13 @@ class StimulusPlugin : Plugin<Project> {
             }
 
             project.dependencies.add("kspJs", "dev.shanty.kotwire:ksp:${BuildInfo.BUILD_NUMBER}")
+
             project.tasks.named("compileKotlinJvm").get().apply {
                 dependsOn("kspKotlinJs")
             }
 
             project.extensions.findByType(KspExtension::class.java)?.apply {
-                arg("jvmOutputDir", "${project.buildDir}/generated/ksp/jvm")
+                arg("jvmOutputDir", "${project.layout.buildDirectory}/generated/ksp/jvm")
             }
 
             project.kotlinExtension.apply {

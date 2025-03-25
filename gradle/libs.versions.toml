@@ -23,6 +23,7 @@ mockk = { group = "io.mockk", name = "mockk", version = "1.13.7" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotest-multiplatform = { id = "io.kotest.multiplatform", version.ref = "kotest" }
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 
 [bundles]
 test = ["kotestRunner", "kotestFrameworkEngine", "kotestAssertion", "kotestTestContainers"]

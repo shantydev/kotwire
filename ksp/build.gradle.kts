@@ -1,9 +1,11 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
     kotlin("jvm")
     id("maven-publish")
+    alias(libs.plugins.shadow)
 }
 
 group = "dev.shanty.kotwire"
@@ -20,6 +22,10 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-Xmulti-dollar-interpolation"
+}
+
+tasks.withType<ShadowJar> {
+    archiveClassifier.set("fat")
 }
 
 publishing {
