@@ -154,31 +154,52 @@ class StimulusProcessor(
                     """.trimIndent()).build())
                     .build()
 
-                is Value.ObjectValue -> PropertySpec.builder(it.name, it.ksType.toTypeName())
-                    .mutable(true)
-                    .setter(FunSpec.setterBuilder().addParameter("it", it.ksType.toTypeName()).addCode("""
-                        attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"] = Json.encodeToString(it)
-                    """.trimIndent()).build())
-                    .getter(FunSpec.getterBuilder().addCode("""
-                        return attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"]?.let { Json.decodeFromString(it) }!!
-                    """.trimIndent()).build())
-                    .build()
-
-                is Value.ArrayValue -> {
-                    val type = ClassName("kotlin", "Array").parameterizedBy(it.parameterType.toTypeName())
+                is Value.ObjectValue -> {
+                    val type = it.ksType.toTypeName()
                     jvmFile.addImport("kotlinx.serialization", "encodeToString")
                     jvmFile.addImport("kotlinx.serialization", "decodeFromString")
                     jvmFile.addImport("kotlinx.serialization.json", "Json")
 
                     PropertySpec.builder(it.name, type)
                         .mutable(true)
-                        .setter(FunSpec.setterBuilder().addParameter("it", type).addCode("""
-                            attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"] = Json.encodeToString<Array<${it.parameterType.declaration.qualifiedName}>>(it)
-                        """.trimIndent()).build())
-                        .getter(FunSpec.getterBuilder().addCode("""
-                            return attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"]?.let { it.split(",").map { Json.decodeFromString<it.parameterType.declaration.qualifiedName>(it) } } ?: emptyArray()
-                        """.trimIndent()).build())
+                        .setter(
+                            FunSpec.setterBuilder().addParameter("it", type).addCode(
+                                """
+                        attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"] = Json.encodeToString(it)
+                    """.trimIndent()
+                            ).build()
+                        )
+                        .getter(
+                            FunSpec.getterBuilder().addCode(
+                                """
+                        return attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"]?.let { Json.decodeFromString(it) }!!
+                    """.trimIndent()
+                            ).build()
+                        )
                         .build()
+                }
+
+                is Value.ArrayValue -> {
+                    val parameterType = it.parameterType.toTypeName()
+                    val type = ClassName("kotlin", "Array").parameterizedBy(parameterType)
+                    jvmFile.addImport("kotlinx.serialization", "encodeToString")
+                    jvmFile.addImport("kotlinx.serialization", "decodeFromString")
+                    jvmFile.addImport("kotlinx.serialization.json", "Json")
+
+                    PropertySpec.builder(it.name, type)
+                        .mutable(true)
+                        .setter(
+                            FunSpec.setterBuilder()
+                                .addParameter("it", type)
+                                .addStatement("""attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"] = Json.encodeToString<%T>(it)""", type)
+                                .build()
+                        )
+                        .getter(
+                            FunSpec.getterBuilder()
+                                .addStatement("""val raw = attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"]""")
+                                .addStatement("""return Json.decodeFromString<%T>(raw)""", type)
+                                .build()
+                        ).build()
                 }
             }
 

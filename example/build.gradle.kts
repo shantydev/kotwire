@@ -8,6 +8,7 @@ plugins {
     id("dev.shanty.kotwire.plugin")
     application
     id("io.kotest.multiplatform") version "5.9.1"
+    kotlin("plugin.serialization") version "2.1.0"
 }
 
 kotlin {
@@ -30,6 +31,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("dev.shanty.kotwire:stimulus:0.0.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
             }
         }
         val jvmMain by getting {
