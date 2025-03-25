@@ -196,7 +196,7 @@ class StimulusProcessor(
                         )
                         .getter(
                             FunSpec.getterBuilder()
-                                .addStatement("""val raw = attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"]""")
+                                .addStatement("""val raw = attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"] ?: error("Value not set")""")
                                 .addStatement("""return Json.decodeFromString<%T>(raw)""", type)
                                 .build()
                         ).build()
