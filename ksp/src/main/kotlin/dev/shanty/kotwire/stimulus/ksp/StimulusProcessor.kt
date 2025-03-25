@@ -166,13 +166,17 @@ class StimulusProcessor(
 
                 is Value.ArrayValue -> {
                     val type = ClassName("kotlin", "Array").parameterizedBy(it.parameterType.toTypeName())
+                    jvmFile.addImport("kotlinx.serialization", "encodeToString")
+                    jvmFile.addImport("kotlinx.serialization", "decodeFromString")
+                    jvmFile.addImport("kotlinx.serialization.json", "Json")
+
                     PropertySpec.builder(it.name, type)
                         .mutable(true)
                         .setter(FunSpec.setterBuilder().addParameter("it", type).addCode("""
-                            attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"] = Json.encodeToString(it)
+                            attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"] = Json.encodeToString<Array<${it.parameterType.declaration.qualifiedName}>>(it)
                         """.trimIndent()).build())
                         .getter(FunSpec.getterBuilder().addCode("""
-                            return attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"]?.let { it.split(",").map { Json.decodeFromString(it) } } ?: emptyArray()
+                            return attributes["data-${controllerNameWithoutSuffix}-${it.name}-value"]?.let { it.split(",").map { Json.decodeFromString<it.parameterType.declaration.qualifiedName>(it) } } ?: emptyArray()
                         """.trimIndent()).build())
                         .build()
                 }
@@ -194,49 +198,6 @@ class StimulusProcessor(
                     .build(),
             )
         }
-
-
-        // Find methods on the controller that take an event as their only parameter and generate a binding
-//        controllerClass.getAllFunctions().filter {
-//            logger.info("Checking ${it.simpleName.asString()} ${it.parameters.size}")
-//            it.parameters.size == 1
-//        }.filter {
-//            // Check parameter type implements the interface"dev.shanty.kotwire.stimulus.Controller.Event"
-//            val firstParameterType = it.parameters.first().type.resolve()
-//            val firstParameterTypeFQN = firstParameterType.declaration.qualifiedName?.asString()
-//            logger.info(
-//                "Checking ${firstParameterType.declaration.qualifiedName?.asString()} is ${Event::class.qualifiedName}"
-//            )
-//            if(firstParameterTypeFQN == Event::class.qualifiedName ||  firstParameterTypeFQN == "Event") {
-//                return@filter true
-//            }
-//
-//            val firstParameterTypeDeclaration = it.parameters.first().type.resolve().declaration
-//            when(firstParameterTypeDeclaration) {
-//                is KSClassDeclaration -> {
-//                    firstParameterTypeDeclaration.superTypes.any { superType ->
-//                        superType.resolve().declaration.qualifiedName?.asString() == Event::class.qualifiedName
-//                    }
-//                }
-//                else -> {
-//                    false
-//                }
-//            }
-//        }.onEach {
-//            // How do I get the name?
-//            val eventName = it.simpleName.asString().removeSuffix("Event")
-//            val eventType = it.parameters.first().type.resolve()
-//            contextClassBuilder.addFunction(
-//                FunSpec.builder("on${eventName.capitalize()}")
-//                    .addParameter("event", eventType.toTypeName())
-//                    .addModifiers(KModifier.PUBLIC)
-//                    .addCode("""
-//                        element.addEventListener("${eventName}", event)
-//                    """.trimIndent())
-//                    .build(),
-//            )
-//        }.toList()
-
 
         val contextClass = contextClassBuilder.build()
         jvmFile.addType(contextClass)
