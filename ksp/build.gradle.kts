@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.shanty.kotwire"
-version = "0.0.1"
+version = project.findProperty("projectVersion") ?: "0.0.0-local"
 
 dependencies {
     implementation(project(":stimulus"))
@@ -19,4 +19,34 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-Xmulti-dollar-interpolation"
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/shantydev/kotwire")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        // Automatically create publications for each target
+        withType<MavenPublication> {
+            pom {
+                name.set("Kotwire KSP")
+                description.set("Kotlin Bindings and Utilities for Stimulus")
+                url.set("https://github.com/shantydev/kotwire")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+            }
+        }
+    }
 }

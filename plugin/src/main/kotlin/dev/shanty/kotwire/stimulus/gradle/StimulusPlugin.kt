@@ -16,7 +16,7 @@ class StimulusPlugin : Plugin<Project> {
                 project.plugins.apply("com.google.devtools.ksp")
             }
 
-            project.dependencies.add("kspJs", "dev.shanty.kotwire:ksp:0.0.1")
+            project.dependencies.add("kspJs", "dev.shanty.kotwire:ksp:${BuildInfo.BUILD_NUMBER}")
             project.tasks.named("compileKotlinJvm").get().apply {
                 dependsOn("kspKotlinJs")
             }

@@ -1,3 +1,5 @@
+import java.time.LocalDateTime
+
 plugins {
     `java-gradle-plugin`
     kotlin("jvm")
@@ -37,5 +39,31 @@ publishing {
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
             }
         }
+    }
+}
+
+tasks.register("generateBuildInfo") {
+    doLast {
+        val buildInfoFile = file("$buildDir/generated/src/main/kotlin/BuildInfo.kt")
+        buildInfoFile.parentFile.mkdirs()
+        buildInfoFile.writeText("""
+            package dev.shanty.kotwire.stimulus.gradle
+
+            object BuildInfo {
+                const val BUILD_NUMBER = "$version"
+                const val BUILD_TIMESTAMP = "${LocalDateTime.now()}"
+            }
+        """.trimIndent())
+    }
+}
+
+// Modify the compile Kotlin task to include generated sources
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    dependsOn("generateBuildInfo")
+}
+
+sourceSets {
+    main {
+        kotlin.srcDir("$buildDir/generated/src/main/kotlin")
     }
 }
