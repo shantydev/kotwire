@@ -23,11 +23,11 @@ class StimulusPlugin : Plugin<Project> {
             }
 
             project.extensions.findByType(KspExtension::class.java)?.apply {
-                arg("jvmOutputDir", "${project.layout.buildDirectory}/generated/ksp/jvm")
+                arg("jvmOutputDir", "${project.layout.buildDirectory.get()}/generated/ksp/jvm")
             }
 
             project.kotlinExtension.apply {
-                sourceSets.getByName("jvmMain").kotlin.srcDir("${project.buildDir}/generated/ksp/jvm")
+                sourceSets.getByName("jvmMain").kotlin.srcDir("${project.layout.buildDirectory.get()}/generated/ksp/jvm")
             }
         }
     }

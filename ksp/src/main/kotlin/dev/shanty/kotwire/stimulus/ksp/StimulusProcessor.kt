@@ -248,6 +248,7 @@ class StimulusProcessor(
         jvmFile.addImport("kotlinx.html", "div")
         jvmFile.addImport("dev.shanty.kotwire", "dataController")
         jvmFile.build().writeTo(jvmOutputDir)
+        logger.info("Wrote to ${jvmOutputDir.absolutePath}")
 
         return StimulusControllerFactory(
             factoryFunc,
