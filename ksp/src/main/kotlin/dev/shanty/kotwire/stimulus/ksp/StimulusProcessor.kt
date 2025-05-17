@@ -457,7 +457,13 @@ class StimulusProcessor(
                 """js("['${first()}']")"""
             }
             else -> {
-                """js("['${joinToString("', '")}']")"""
+                val builder = StringBuilder()
+                builder.append("js(\"\"\"[\n")
+                forEachIndexed { index, s ->
+                    builder.append("\"$s\",\n")
+                }
+                builder.append("]\"\"\")")
+                builder.toString()
             }
         }
 
