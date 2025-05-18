@@ -17,7 +17,6 @@ fun Tag.turboStream(
     requestId: String? = null,
     block: FlowContent.() -> Unit = {},
 ) {
-
     val attributes = mutableMapOf(
         "action" to action.name.lowercase(),
     )
@@ -37,14 +36,19 @@ fun Tag.turboStream(
 
 fun TagConsumer<*>.turboStream(
     action: Action,
-    target: String,
+    target: String? = null,
+    requestId: String? = null,
     block: FlowContent.() -> Unit = {},
 ) {
+    val attributes = mutableMapOf(
+        "action" to action.name.lowercase(),
+    )
+
+    target?.let { attributes["target"] = it }
+    requestId?.let { attributes["request-id"] = it }
+
     TurboStream(
-        mapOf(
-            "action" to action.name.lowercase(),
-            "target" to target,
-        ),
+        attributes,
         this,
     ).visit {
         template {
