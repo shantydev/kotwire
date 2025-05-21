@@ -14,6 +14,7 @@ import dev.shanty.kotwire.stimulus.Event
 import dev.shanty.kotwire.stimulus.StimulusController
 import kotlinx.datetime.LocalDateTime
 import java.io.File
+import javax.lang.model.type.TypeVariable
 
 class StimulusProcessor(
     private val codeGenerator: CodeGenerator,
@@ -313,6 +314,7 @@ class StimulusProcessor(
         targets.forEach {
             val targetName = "${it}Target"
             val typeVariable = TypeVariableName("T", ClassName("org.w3c.dom", "HTMLElement"))
+            val listType = List::class.asClassName().parameterizedBy(typeVariable)
             addFunction(
                 FunSpec.builder(targetName)
                     .addTypeVariable(typeVariable)
@@ -320,6 +322,15 @@ class StimulusProcessor(
                     .returns(ClassName("", "StimulusProperty").parameterizedBy(typeVariable))
                     .addCode("return StimulusProperty(\"${targetName}\")")
                     .build(),
+            )
+
+            addFunction(
+                FunSpec.builder("${targetName}s")
+                    .addTypeVariable(typeVariable)
+                    .receiver(controllerClass.asStarProjectedType().toTypeName())
+                    .returns(ClassName("", "StimulusProperty").parameterizedBy(listType))
+                    .addCode("return StimulusProperty(\"${targetName}s\")")
+                    .build()
             )
         }
 
