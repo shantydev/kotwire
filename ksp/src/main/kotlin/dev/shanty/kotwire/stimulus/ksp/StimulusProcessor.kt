@@ -1,7 +1,5 @@
 package dev.shanty.kotwire.stimulus.ksp
 
-import com.google.devtools.ksp.getClassDeclarationByName
-import com.google.devtools.ksp.getKotlinClassByName
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
@@ -10,11 +8,9 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 import com.squareup.kotlinpoet.ksp.writeTo
 import dev.shanty.kotwire.stimulus.BridgeController
 import dev.shanty.kotwire.stimulus.ControllerScopeMarker
-import dev.shanty.kotwire.stimulus.Event
 import dev.shanty.kotwire.stimulus.StimulusController
 import kotlinx.datetime.LocalDateTime
 import java.io.File
-import javax.lang.model.type.TypeVariable
 
 class StimulusProcessor(
     private val codeGenerator: CodeGenerator,
@@ -314,7 +310,7 @@ class StimulusProcessor(
         targets.forEach {
             val targetName = "${it}Target"
             val typeVariable = TypeVariableName("T", ClassName("org.w3c.dom", "HTMLElement"))
-            val listType = List::class.asClassName().parameterizedBy(typeVariable)
+            val arrayType = Array::class.asClassName().parameterizedBy(typeVariable)
             addFunction(
                 FunSpec.builder(targetName)
                     .addTypeVariable(typeVariable)
@@ -328,7 +324,7 @@ class StimulusProcessor(
                 FunSpec.builder("${targetName}s")
                     .addTypeVariable(typeVariable)
                     .receiver(controllerClass.asStarProjectedType().toTypeName())
-                    .returns(ClassName("", "StimulusProperty").parameterizedBy(listType))
+                    .returns(ClassName("", "StimulusProperty").parameterizedBy(arrayType))
                     .addCode("return StimulusProperty(\"${targetName}s\")")
                     .build()
             )
