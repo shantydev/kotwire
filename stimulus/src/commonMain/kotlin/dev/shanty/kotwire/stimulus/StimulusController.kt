@@ -8,6 +8,7 @@ annotation class StimulusController(
     val targets: Array<String> = emptyArray(),
     val values: KClass<*> = Unit::class,
     val events: Array<StimulusEvent> = emptyArray(),
+    val classes: Array<String> = emptyArray(),
 )
 
 @Target(AnnotationTarget.CLASS)

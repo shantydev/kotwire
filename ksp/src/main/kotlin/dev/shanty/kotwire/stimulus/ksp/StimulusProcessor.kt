@@ -74,6 +74,7 @@ class StimulusProcessor(
         val valueClass = annotation.values()
         val component = annotation.component()
         val events = annotation.events()
+        val classes = annotation.classes()
 
         // Get list of all properties on class
         val values =
@@ -104,9 +105,16 @@ class StimulusProcessor(
 
         val fileBuilder = FileSpec.builder(packageName, className)
         fileBuilder.writeLifecycleHooks(controllerClass, targets, values)
-        fileBuilder.writeExtensions(controllerClass, targets, values)
+        fileBuilder.writeExtensions(controllerClass, targets, values, classes)
         fileBuilder.writeEventDefinitions(controllerClass, events)
-        val factoryFunc = fileBuilder.writeControllerFactory(controllerClass, targets, values, valueClass, component)
+        val factoryFunc = fileBuilder.writeControllerFactory(
+            controllerClass,
+            targets,
+            values,
+            valueClass,
+            classes,
+            component
+        )
         val file = fileBuilder.build()
         file.writeTo(codeGenerator, Dependencies(true, controllerClass.containingFile!!))
 
@@ -303,9 +311,40 @@ class StimulusProcessor(
         controllerClass: KSClassDeclaration,
         targets: List<String>,
         values: List<Value>,
+        classes: List<String>,
     ) {
         // Write a delegate for each target as an extension function on the controller class that takes a generic type that extends HTMLElement
         addImport("org.w3c.dom", "HTMLElement")
+
+        classes.forEach {
+            val className = "${it}Class"
+            addFunction(
+                FunSpec.builder(className)
+                    .receiver(controllerClass.asStarProjectedType().toTypeName())
+                    .returns(ClassName("", "StimulusProperty").parameterizedBy(String::class.asTypeName()))
+                    .addCode("return StimulusProperty(\"${className}\")")
+                    .build(),
+            )
+
+            addFunction(
+                FunSpec.builder("has${className.capitalize()}")
+                    .receiver(controllerClass.asStarProjectedType().toTypeName())
+                    .returns(Boolean::class.asTypeName())
+                    .addCode("""
+                        println(this.asDynamic()["has${className.capitalize()}"])
+                        return this.asDynamic()["has${className.capitalize()}"]
+                    """.trimIndent())
+                    .build(),
+            )
+
+            addFunction(
+                FunSpec.builder("${className}s")
+                    .receiver(controllerClass.asStarProjectedType().toTypeName())
+                    .returns(ClassName("", "StimulusProperty").parameterizedBy(Array::class.asClassName().parameterizedBy(String::class.asTypeName())))
+                    .addCode("return StimulusProperty(\"${className}s\")")
+                    .build(),
+            )
+        }
 
         targets.forEach {
             val targetName = "${it}Target"
@@ -402,6 +441,7 @@ class StimulusProcessor(
         targets: List<String>,
         values: List<Value>,
         valueClass: KSClassDeclaration?,
+        classes: List<String>,
         component: String? = null,
     ): FunSpec {
         addImport("kotlin.reflect", "KClass")
@@ -437,6 +477,9 @@ class StimulusProcessor(
                         val component = "$component"
                     """.trimIndent()
                 } else ""}
+                
+                @JsName("classes")
+                val classes = $${classes.toArrayStatement()}
             }
 
             val factoryFunc = clazz.js.asDynamic()
@@ -497,6 +540,10 @@ class StimulusProcessor(
             (it.arguments.firstOrNull { it.name!!.asString() == "payload" }?.value as KSType?)?.declaration as KSClassDeclaration?,
         )
     } ?: emptyList()
+
+    private fun KSAnnotation.classes() = (arguments.firstOrNull {
+        it.name!!.asString() == "classes"
+    }?.value as List<String>?) ?: emptyList()
 
     private data class EventDefinition(
         val name: String,
