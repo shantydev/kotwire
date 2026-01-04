@@ -524,13 +524,13 @@ class StimulusProcessor(
     private fun KSClassDeclaration.getBridgeComponentAnnotation() = annotations
         .firstOrNull { it.shortName.asString() == BridgeController::class.simpleName }
 
-    private fun KSAnnotation.targets() = arguments.first {
+    private fun KSAnnotation.targets() = arguments.firstOrNull {
         it.name!!.asString() == "targets"
-    }.value as List<String>? ?: emptyList()
+    }?.value as List<String>? ?: emptyList()
 
-    private fun KSAnnotation.values() = (arguments.first {
+    private fun KSAnnotation.values() = (arguments.firstOrNull {
         it.name!!.asString() == "values"
-    }.value as KSType?)?.declaration as KSClassDeclaration?
+    }?.value as KSType?)?.declaration as KSClassDeclaration?
 
     private fun KSAnnotation.events() = (arguments.firstOrNull {
         it.name!!.asString() == "events"

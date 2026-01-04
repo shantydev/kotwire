@@ -13,15 +13,17 @@ version = project.findProperty("projectVersion") ?: "0.0.0-local"
 
 dependencies {
     implementation(project(":stimulus"))
-    implementation("org.jetbrains.kotlin:kotlin-reflect:2.1.10")
-    implementation("com.google.devtools.ksp:symbol-processing-api:2.1.10-1.0.29")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.3.0")
+    implementation("com.google.devtools.ksp:symbol-processing-api:2.3.4")
     implementation("com.squareup:kotlinpoet:1.18.1")
     implementation("com.squareup:kotlinpoet-ksp:1.18.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs += "-Xmulti-dollar-interpolation"
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xmulti-dollar-interpolation")
+    }
 }
 
 tasks.withType<ShadowJar> {

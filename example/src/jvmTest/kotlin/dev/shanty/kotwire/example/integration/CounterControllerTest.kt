@@ -6,6 +6,7 @@ import dev.shanty.kotwire.example.server
 import io.kotest.core.extensions.install
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.testcontainers.ContainerExtension
+import io.kotest.extensions.testcontainers.TestContainerSpecExtension
 import io.kotest.extensions.testcontainers.perSpec
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy
@@ -22,8 +23,8 @@ class CounterControllerTest : FunSpec({
         .withStartupCheckStrategy(MinimumDurationRunningStartupCheckStrategy(Duration.ofSeconds(1)))
         .withExtraHost("hostmachine", "host-gateway")
 
-    val container = install(ContainerExtension(genericContainer))
-    listener(container.perSpec())
+    val container = install(TestContainerSpecExtension(genericContainer))
+
     val server = server().start(wait = false)
 
     afterSpec {

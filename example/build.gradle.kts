@@ -3,12 +3,11 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 
 plugins {
-    kotlin("multiplatform") version "2.1.10"
-    id("com.google.devtools.ksp") version "2.1.10-1.0.31"
+    kotlin("multiplatform") version "2.3.0"
+    id("com.google.devtools.ksp") version "2.3.4"
     id("dev.shanty.kotwire.plugin")
-    application
-    id("io.kotest.multiplatform") version "5.9.1"
-    kotlin("plugin.serialization") version "2.1.0"
+    id("io.kotest") version "6.0.7"
+    kotlin("plugin.serialization") version "2.3.0"
 }
 
 kotlin {
@@ -18,7 +17,8 @@ kotlin {
         }
     }
 
-    jvm()
+    jvm {
+    }
 
     sourceSets {
         val jsMain by getting {
@@ -53,17 +53,13 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation("com.microsoft.playwright:playwright:1.50.0")
-                implementation("io.kotest:kotest-runner-junit5:5.9.1")
-                implementation("io.kotest:kotest-extensions-junitxml:5.9.1")
-                implementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
+                implementation("io.kotest:kotest-runner-junit5:6.0.7")
+                implementation("io.kotest:kotest-extensions-junitxml:6.0.7")
+                implementation("io.kotest:kotest-extensions-testcontainers:6.0.7")
                 implementation("org.testcontainers:testcontainers:1.18.3")
             }
         }
     }
-}
-
-application {
-    mainClass.set("dev.shanty.kotwire.example.MainKt")
 }
 
 tasks.findByName("jvmProcessResources")?.dependsOn("copyClientJs")
@@ -94,6 +90,7 @@ tasks.withType<Test>().configureEach {
         junitXml.required.set(false)
     }
 
+    systemProperty("kotest.framework.config.fqn", "dev.shanty.kotwire.example.integration.MyConfig")
     systemProperty("gradle.build.dir", project.buildDir)
     environment("VIDEO_OUTPUT_DIR", project.layout.buildDirectory.dir("test-results/playwright/videos").get().asFile.absolutePath)
 }

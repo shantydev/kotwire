@@ -24,7 +24,7 @@ fun FunSpecRootScope.playwrightTest(testName: String, container: GenericContaine
         val pages = context.pages()
         pages.forEach {
             it.close()
-            it.video().saveAs(videosDir.resolve("${testCase.name.testName}.webm".replace(" ", "_")))
+            it.video().saveAs(videosDir.resolve("${testCase.name.name}.webm".replace(" ", "_")))
         }
         context.close()
         browser.close()

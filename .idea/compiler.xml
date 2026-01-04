@@ -2,6 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="example.main" target="23" />
+      <module name="example.test" target="23" />
       <module name="kotwire.main" target="23" />
       <module name="kotwire.stimulus.gradle.main" target="23" />
       <module name="kotwire.stimulus.gradle.test" target="23" />

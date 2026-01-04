@@ -9,9 +9,5 @@ dependencyResolutionManagement {
     }
 }
 include("stimulus")
-include("stimulus:gradle")
-findProject(":stimulus:gradle")?.name = "gradle"
-include("stimulus:ksp")
-findProject(":stimulus:ksp")?.name = "ksp"
 include("plugin")
 include("ksp")
